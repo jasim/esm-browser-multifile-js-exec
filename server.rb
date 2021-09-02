@@ -9,6 +9,12 @@ def filepath(filename)
   "uploads/#{filename}"
 end
 
+set :public_folder, Proc.new { File.join(root, "public") }
+
+get "/" do
+  redirect '/index.html'
+end
+
 post '/:filename' do
   filename = params[:filename]
   body = request.body.read
