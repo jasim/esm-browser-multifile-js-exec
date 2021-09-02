@@ -1,0 +1,61 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Single-file JS React JSX execution environment</title>
+
+  <link rel="stylesheet" href="tailwind.css">
+  <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+<!--
+@babel/standalone provides a standalone build of Babel for use in browsers and other non-Node.js environments.
+https://babeljs.io/docs/en/babel-standalone
+-->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script src="index.js"></script>
+
+<div class="p-8">
+  <h1 class="text-xl mb-2">Single-file React JSX execution environment</h1>
+  <div class="mb-8">
+    <a class="underline blue" href="https://github.com/jasim/basic-js-react-browser-eval">Code</a>
+  </div>
+
+  <textarea id="code" class="block mb-8 w-3/4 h-80 border border-black p-4 font-mono" autofocus>
+import React, { useState } from "https://cdn.skypack.dev/react@17.0.1";
+import ReactDOM from "https://cdn.skypack.dev/react-dom@17.0.1";
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button className="blue font-bold underline" onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+
+ReactDOM.render(<Example />, document.getElementById('react_root'));
+  </textarea>
+
+  <button class="bg-gray-100 p-4 w-32" onClick="executeScript()">Execute</button>
+
+  <div class="border p-4">
+    <div id="react_root"/>
+  </div>
+
+</div>
+</body>
+
+</html>
