@@ -1,4 +1,9 @@
 require 'sinatra'
+require 'babel/transpiler'
+
+def babel(filepath)
+  `npx babel --presets @babel/preset-react #{filepath}`
+end
 
 def filepath(filename)
   "uploads/#{filename}"
@@ -16,22 +21,21 @@ end
 
 get '/:filename' do
   filename = params[:filename]
-
   extension = File.extname(filename).downcase
-  # remove the . in .css
-  if extension.length > 1
-    extension = extension[1..-1]
+  filepath = filepath(filename)
+
+  unless File.exists?(filepath)
+    status 404
+    return
   end
 
-  mime_type = MIME::Types.type_for(extension)
-
-  file_contents = File.read(filepath(filename), "b")
-
-  if extension == "js"
-    file_contents = babel(file_contents)
+  if extension == ".js"
+    file_contents = babel(filepath)
+  else
+    file_contents = File.read(filepath, { mode: "rb" })
   end
 
   body file_contents
-  content_type mime_type
+  content_type Rack::Mime.mime_type(extension)
   status 200
 end
