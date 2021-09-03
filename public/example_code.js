@@ -1,3 +1,5 @@
+/* Sample code shown as starting template when loading the app */
+
 const index_code = `import React, { useState } from "https://cdn.skypack.dev/react@17.0.1";
 import ReactDOM from "https://cdn.skypack.dev/react-dom@17.0.1";
 
@@ -23,6 +25,6 @@ export function ClickTracker() {
 `
 
 export default [
-  {filename: "index.js", code: index_code},
-  {filename: "ClickTracker.js", code: click_tracker_code}
+  {module_name: "index", code: index_code},
+  {module_name: "ClickTracker", code: click_tracker_code}
 ]
