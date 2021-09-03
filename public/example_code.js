@@ -25,6 +25,6 @@ export function ClickTracker() {
 `
 
 export default [
-  {module_name: "index", code: index_code},
-  {module_name: "ClickTracker", code: click_tracker_code}
+  {module_name: "index", code: index_code, upload_filename: null},
+  {module_name: "ClickTracker", code: click_tracker_code, upload_filename: null}
 ]

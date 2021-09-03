@@ -36,6 +36,9 @@ function build_js_entrypoint_dom(entrypoint) {
 }
 
 let build_execution_iframe = (modules) => {
+  let iframe_dom = document.getElementById("user_iframe_dom")
+  if (iframe_dom) user_iframe_dom.remove()
+
   let entrypoint = modules.find(module => module["module_name"] === "index")
   let user_script_dom = build_js_entrypoint_dom(entrypoint)
   let contents = `
@@ -53,17 +56,14 @@ let build_execution_iframe = (modules) => {
 </html>
 `;
 
-  let iframe = document.createElement("iframe");
-  iframe.setAttribute("id", "user_iframe_dom");
-  iframe.srcdoc = contents
-  return iframe
+  iframe_dom = document.createElement("iframe");
+  iframe_dom.setAttribute("id", "user_iframe_dom");
+  iframe_dom.srcdoc = contents
+  return iframe_dom
 }
 
 export default function execute_project(modules) {
   upload_files(modules).then(_ => {
-    let user_iframe_dom = document.getElementById("user_iframe_dom")
-    if (user_iframe_dom) user_iframe_dom.remove()
-
     user_iframe_dom = build_execution_iframe(modules)
     document.body.appendChild(user_iframe_dom);
 
