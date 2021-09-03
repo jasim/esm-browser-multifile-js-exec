@@ -1,10 +1,8 @@
-let executionCount = 0;
-
 function upload_files(modules) {
-  modules = modules.filter(file => file["module_name"] !== "index")
+  modules = modules.filter(module => module["module_name"] !== "index")
 
   let promises = modules.map(module => {
-    fetch(`/${module["module_name"]}`, {
+    fetch(`/${module["upload_filename"]}`, {
       method: 'POST',
       headers: {},
       body: module["code"]
@@ -38,12 +36,54 @@ function execute_entrypoint() {
   document.body.appendChild(user_script_dom);
 }
 
-let update_import_map = files => {
-  files.forEach(file => file["import_map"] = strip_extension(file["filename"]))
-  executionCount = executionCount + 1
+let compute_import_map = modules => {
+  /*
+  Used to invalidate ESM module cache. The browser caches ESM modules based on their lookup path. The same URL is never
+  fetched again. This means any changes the user makes to the modules won't be reflected in subsequent Executes. To
+  prevent this, we're depending on import-maps (https://github.com/WICG/import-maps). With this, we can tell the browser
+  to refer to a specific file on the server for any given module name. We're using a naive cache invalidation that points
+  to a new URL for every execution, based on a freshly generated random value.
+  */
+  let rnd = Math.random() * 9999
+
+  let import_map = {}
+  modules.forEach(module => {
+      let module_name = module["module_name"]
+      let upload_filename = `./${module["module_name"]}-${rnd}.js`
+      module["upload_filename"] = upload_filename
+      import_map[module_name] = upload_filename
+    }
+  )
+
+  return import_map
 }
 
-export default function execute_project() {
-  files = update_import_map(files)
-  upload_files(files).then(_ => Promise.resolve(execute_entrypoint()))
+let update_import_map_in_dom = import_map => {
+  let dom = document.getElementById("user_import_map")
+  if (dom) dom.remove()
+
+  dom = document.createElement('script')
+  dom.setAttribute("id", "user_import_map")
+  dom.setAttribute("type", "importmap")
+  dom.text = JSON.stringify({"imports": import_map}, null, 2)
+
+  document.head.appendChild(dom);
+  /*  <script type="importmap">
+      {
+        "imports": {
+        "moment": "/node_modules/moment/src/moment.js",
+        "lodash": "/node_modules/lodash-es/lodash.js"
+      }
+      }
+    </script>
+    */
+}
+
+
+export default function execute_project(modules) {
+  let import_map = compute_import_map(modules)
+  upload_files(modules).then(_ => {
+    update_import_map_in_dom(import_map)
+    return Promise.resolve(execute_entrypoint())
+  })
 }

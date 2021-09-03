@@ -3,7 +3,7 @@
 const index_code = `import React, { useState } from "https://cdn.skypack.dev/react@17.0.1";
 import ReactDOM from "https://cdn.skypack.dev/react-dom@17.0.1";
 
-import {ClickTracker} from "./ClickTracker.js";
+import {ClickTracker} from "./ClickTracker";
 
 ReactDOM.render(<ClickTracker />, document.getElementById('user_react_root'));
 `;
