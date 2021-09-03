@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'babel/transpiler'
 
 def babel(filepath)
   `npx babel --presets @babel/preset-react #{filepath}`
