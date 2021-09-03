@@ -5,32 +5,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>Single-file JS React JSX execution environment</title>
-
   <link rel="stylesheet" href="styles/tailwind.css">
   <link rel="stylesheet" href="styles/styles.css">
 
+  <!--
+  @babel/standalone provides a standalone build of Babel for use in browsers and other non-Node.js environments.
+  https://babeljs.io/docs/en/babel-standalone
+  -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel" data-type="module" data-presets="react" src="index.js"></script>
 </head>
 
-<body class="bg-gray-100">
-
-<!--
-@babel/standalone provides a standalone build of Babel for use in browsers and other non-Node.js environments.
-https://babeljs.io/docs/en/babel-standalone
--->
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-<script type="text/babel" data-type="module" data-presets="react" src="index.js"></script>
-
-<div class="p-8">
-  <h1 class="text-xl mb-8">
-    <span class="border-b-4 border-black">Multi-file React JSX execution environment</span>
-  </h1>
-
-
-  <div id="app_react_root">Loading application...</div>
-</div>
+<body class="bg-gray-100 p-8">
+<h1 class="text-xl mb-8">
+  <span class="border-b-4 border-black">Multi-file React JSX execution environment</span>
+</h1>
+<div id="app_react_root">Loading application...</div>
 </body>
 
 </html>

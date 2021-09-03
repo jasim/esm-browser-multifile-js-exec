@@ -3,6 +3,7 @@ function upload_files(modules) {
 
   let promises = modules.map(module => {
     let upload_filename = module["module_name"] + ".js"
+    module["upload_filename"] = upload_filename
     fetch(`/${upload_filename}`, {
       method: 'POST',
       headers: {},
@@ -58,13 +59,14 @@ let build_execution_iframe = (modules) => {
 
   iframe_dom = document.createElement("iframe");
   iframe_dom.setAttribute("id", "user_iframe_dom");
+  iframe_dom.setAttribute("class", "bg-white mt-4 border border-blue-500 border-4 p-4 w-full")
   iframe_dom.srcdoc = contents
   return iframe_dom
 }
 
 export default function execute_project(modules) {
   upload_files(modules).then(_ => {
-    user_iframe_dom = build_execution_iframe(modules)
+    let user_iframe_dom = build_execution_iframe(modules)
     document.body.appendChild(user_iframe_dom);
 
     return Promise.resolve(true)

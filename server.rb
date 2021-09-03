@@ -25,6 +25,13 @@ post '/:filename' do
   end
 end
 
+delete '/:filename' do
+  filename = params[:filename]
+  File.unlink(filepath(filename))
+  status 200
+  body "File deleted. #{filename}"
+end
+
 get '/:filename' do
   filename = params[:filename]
   extension = File.extname(filename).downcase

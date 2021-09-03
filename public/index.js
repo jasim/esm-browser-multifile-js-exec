@@ -1,6 +1,6 @@
 'use strict'
 
-import React, {useState} from "https://cdn.skypack.dev/react@17.0.1";
+import React, {useState, useEffect} from "https://cdn.skypack.dev/react@17.0.1";
 import ReactDOM from "https://cdn.skypack.dev/react-dom@17.0.1";
 
 import execute_project from "./execute_project.js";
@@ -9,13 +9,21 @@ import example_code from "./example_code.js";
 function App() {
   let [files, setFiles] = useState(() => example_code)
 
+  useEffect(() => {
+    execute_project(files)
+  }, [])
+
   let delete_module_ui = module => {
     let name = module["module_name"]
     if (name === "index") {
       return <p>entrypoint</p>
     }
 
-    let onClick = _ => setFiles(files => files.filter(file => file["module_name"] !== name))
+    let onClick = _ => setFiles(files => {
+        fetch(`/${module["upload_filename"]}`, {method: 'DELETE',})
+        return files.filter(file => file["module_name"] !== name)
+      }
+    )
     return <button className={"text-lg bg-red-600 text-white px-1"} onClick={onClick}>Delete</button>
   }
 
