@@ -33,9 +33,9 @@ let compute = modules => {
   let import_map = {}
   modules.forEach(module => {
       let module_name = module["module_name"]
-      let upload_filename = `./${module["module_name"]}-${rnd}.js`
+      let upload_filename = `${module["module_name"]}-${rnd}.js`
       module["upload_filename"] = upload_filename
-      import_map[module_name] = upload_filename
+      import_map[module_name] = `./${upload_filename}`
     }
   )
 

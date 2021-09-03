@@ -1,10 +1,9 @@
-import build_import_map_dom from "./import_map.js";
-
 function upload_files(modules) {
   modules = modules.filter(module => module["module_name"] !== "index")
 
   let promises = modules.map(module => {
-    fetch(`/${module["upload_filename"]}`, {
+    let upload_filename = module["module_name"] + ".js"
+    fetch(`/${upload_filename}`, {
       method: 'POST',
       headers: {},
       body: module["code"]
@@ -36,27 +35,36 @@ function build_js_entrypoint_dom(entrypoint) {
   return user_script_dom
 }
 
-let build_execution_iframe = (import_map, modules) => {
+let build_execution_iframe = (modules) => {
   let entrypoint = modules.find(module => module["module_name"] === "index")
   let user_script_dom = build_js_entrypoint_dom(entrypoint)
-  let contents = `<!DOCTYPE html><head>${import_map.outerHTML}</head><body><div id="react_root"></div>${user_script_dom.outerHTML}</body>`;
-  console.log(contents)
-  var iframe = document.createElement("iframe");
+  let contents = `
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Execute JS</title>
+</head>
+<body>
+  <div id="react_root"></div>
+  ${user_script_dom.outerHTML}
+</body>
+</html>
+`;
+
+  let iframe = document.createElement("iframe");
+  iframe.setAttribute("id", "user_iframe_dom");
   iframe.srcdoc = contents
   return iframe
 }
 
 export default function execute_project(modules) {
-  let import_map_dom, iframe
-
-  [modules, import_map_dom] = build_import_map_dom(modules)
-
   upload_files(modules).then(_ => {
-
     let user_iframe_dom = document.getElementById("user_iframe_dom")
     if (user_iframe_dom) user_iframe_dom.remove()
 
-    user_iframe_dom = build_execution_iframe(import_map_dom, modules)
+    user_iframe_dom = build_execution_iframe(modules)
     document.body.appendChild(user_iframe_dom);
 
     return Promise.resolve(true)
