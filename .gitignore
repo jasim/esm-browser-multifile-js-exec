@@ -2,3 +2,4 @@ uploads/*
 !uploads/.gitkeep
 package-lock.json
 node_modules
+nginx_conf

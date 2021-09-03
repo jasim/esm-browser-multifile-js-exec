@@ -101,4 +101,14 @@ function startApp() {
   ReactDOM.render(<App/>, document.getElementById('app_react_root'));
 }
 
-window.addEventListener('load', _ => startApp())
+
+/* http://youmightnotneedjquery.com/#ready */
+function ready(fn) {
+  if (document.readyState != 'loading'){
+    fn();
+  } else {
+    document.addEventListener('DOMContentLoaded', fn);
+  }
+}
+
+ready(startApp)

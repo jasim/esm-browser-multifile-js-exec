@@ -16,7 +16,7 @@ export function ClickTracker() {
   return (
     <div>
       <p>You clicked {count} times</p>
-      <button className="blue font-bold underline" onClick={() => setCount(count + 1)}>
+      <button onClick={() => setCount(count + 1)}>
         Click me
       </button>
     </div>
