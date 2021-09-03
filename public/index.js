@@ -1,16 +1,17 @@
 'use strict'
 
-import React, {useState, useEffect} from "https://cdn.skypack.dev/react@17.0.1";
+import React, {useState, useEffect} from "https://cdn.skypack.dev/react@17.0.delete_module";
 import ReactDOM from "https://cdn.skypack.dev/react-dom@17.0.1";
 
 import execute_project from "./execute_project.js";
 import example_code from "./example_code.js";
 
 function App() {
-  let [files, setFiles] = useState(() => example_code)
+  let [modules, set_modules] = useState(() => example_code)
+  let [new_module_name, set_new_module_name] = useState(() => "")
 
   useEffect(() => {
-    execute_project(files)
+    execute_project(modules)
   }, [])
 
   let delete_module_ui = module => {
@@ -19,55 +20,76 @@ function App() {
       return <p>entrypoint</p>
     }
 
-    let onClick = _ => setFiles(files => {
+    let delete_module = _ => set_modules(modules => {
         fetch(`/${module["upload_filename"]}`, {method: 'DELETE',})
-        return files.filter(file => file["module_name"] !== name)
+        return modules.filter(module => module["module_name"] !== name)
       }
     )
-    return <button className={"text-lg bg-red-600 text-white px-1"} onClick={onClick}>Delete</button>
+    return <button className={"text-lg bg-red-600 text-white px-1"} onClick={delete_module}>Delete</button>
   }
 
   let update_code = (module_name, code) => {
-    setFiles(files => files.map(file => {
-        if (file["module_name"] == module_name) {
-          return {...file, code: code}
-        } else return file
+    set_modules(modules => modules.map(module => {
+        if (module["module_name"] == module_name) {
+          return {...module, code: code}
+        } else return module
       })
     )
   }
 
-  let filesView =
-    files.map(file => {
+  let add_new_module = () => {
+    /* https://stackoverflow.com/a/4250417 */
+    let remove_extension = (filename) => {
+      var lastDotPosition = filename.lastIndexOf(".");
+      if (lastDotPosition === -1) return filename;
+      else return filename.substr(0, lastDotPosition);
+    }
+
+    let module_name = remove_extension(new_module_name).trim()
+    if (module_name.length < 1) return
+
+    let new_module = {"module_name": module_name, "code": "", upload_filename: null}
+    set_modules(modules => modules.concat(new_module))
+    set_new_module_name(_ => "")
+  }
+
+  let modules_view =
+    modules.map(module => {
       return (
-        <div key={file["module_name"]} className={"mb-2 w-full"}>
+        <div key={module["module_name"]} className={"mb-4 w-full"}>
           <div className={"flex items-end justify-between"}>
             <h3 className={"text-lg mb-0 pb-0 font-mono"}><span
-              className={"bg-white p-2"}> ./{file["module_name"]}.js</span></h3>
-            {delete_module_ui(file)}
+              className={"bg-white p-2"}> ./{module["module_name"]}.js</span></h3>
+            {delete_module_ui(module)}
           </div>
           <textarea id="code" className="block w-full h-80 p-4 font-mono text-sm"
-                    autoFocus value={file["code"]} onChange={e => update_code(file["module_name"], e.target.value)}/>
+                    autoFocus value={module["code"]}
+                    onChange={e => update_code(module["module_name"], e.target.value)}/>
         </div>
       )
     })
 
+  let add_new_module_view =
+    <div key={"add_new_module"}
+         className={"mb-4 w-full h-80 bg-gray-300 relative hover:bg-gray-800 text-green-900 hover:text-white"}>
+
+      <input className={"absolute block mb-2 w-full p-4 h-8 text-lg hover:text-black text-black"} type={"text"}
+             placeholder={"Name of new module file"} value={new_module_name}
+             onChange={e => set_new_module_name(e.target.value)}/>
+
+      <button className={"flex justify-center items-center h-full w-full"}
+              onClick={_ => add_new_module()}>
+        <p className={""} style={{"fontSize": "92px"}}>+</p>
+      </button>
+    </div>
+
   return (
     <div>
       <div className={"grid grid-cols-3 gap-x-8"}>
-        {filesView}
-        <div key={"add_new_file"}
-             className={"mb-2 w-full h-full bg-gray-300 relative hover:bg-gray-800 text-green-900 hover:text-white"}>
-
-          <input className={"absolute block mb-2 w-full p-4 h-8 text-lg hover:text-black text-black"} type={"text"}
-                 placeholder={"Name of new file"}/>
-
-          <button className={"flex justify-center items-center h-full w-full"}
-                  onClick={_ => 0}>
-            <p className={""} style={{"fontSize": "92px"}}>+</p>
-          </button>
-        </div>
+        {modules_view}
+        {add_new_module_view}
       </div>
-      <button className="bg-gray-700 text-gray-50 px-4 py-2 text-xl" onClick={_ => execute_project(files)}>Execute!
+      <button className="bg-gray-700 text-gray-50 px-4 py-2 text-xl" onClick={_ => execute_project(modules)}>Execute!
         (runs index.js)
       </button>
     </div>
