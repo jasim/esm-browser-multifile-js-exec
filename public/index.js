@@ -14,6 +14,15 @@ function App() {
     return <button className={"text-sm red-900 mb-2"} onClick={onClick}>Delete</button>
   }
 
+  let update_code = (module_name, code) => {
+    setFiles(files => files.map(file => {
+        if (file["module_name"] == module_name) {
+          return {...file, code: code}
+        } else return file
+      })
+    )
+  }
+
   let filesView =
     files.map(file => {
       return (
@@ -21,7 +30,7 @@ function App() {
           <h3 className={"text-lg mb-0 pb-0"}>{file["module_name"]}</h3>
           {delete_module_ui(file["module_name"])}
           <textarea id="code" className="block mb-8 w-3/4 h-80 border border-black p-4 font-mono"
-                    autoFocus>{file["code"]}</textarea>
+                    autoFocus value={file["code"]} onChange={e => update_code(file["module_name"], e.target.value)}/>
         </div>
       )
     })
